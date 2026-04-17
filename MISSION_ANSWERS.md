@@ -85,20 +85,20 @@ Cách các services communicate:
 
 ## Part 3: Cloud Deployment
 
-### Exercise 3.1: Railway deployment
+### Exercise 3.1: Render deployment
 
-- **URL:** *(điền sau khi deploy — xem DEPLOYMENT.md)*
-- **Screenshot:** xem `screenshots/railway-dashboard.png`
+- **Status:** Đã deploy thành công bằng Render Blueprint
+- **URL:** `https://ai-agent-production-5g0u.onrender.com/`
+- **Screenshot:** xem `screenshots/render-dashboard.png`
 
 **Steps thực hiện:**
 ```bash
-npm i -g @railway/cli
-railway login
-railway init
-railway variables set AGENT_API_KEY=<strong-random-key>
-railway variables set ENVIRONMENT=production
-railway up
-railway domain
+# 1) Push code lên GitHub
+# 2) Render -> New -> Blueprint
+# 3) Branch: main
+# 4) Blueprint Path: 06-lab-complete/render.yaml
+# 5) Set OPENAI_API_KEY và AGENT_API_KEY
+# 6) Deploy và nhận URL onrender
 ```
 
 ### Exercise 3.2: So sánh `render.yaml` vs `railway.toml`

@@ -7,41 +7,26 @@
 ## Public URL
 
 ```
-https://<your-app>.railway.app
+https://ai-agent-production-5g0u.onrender.com/
 ```
 
-*(Điền URL thật sau khi deploy — xem hướng dẫn bên dưới)*
+Đã deploy thành công trên Render bằng Blueprint.
 
 ## Platform
 
-Railway
+Render
 
 ---
 
-## Cách deploy (Railway)
+## Cách deploy (Render Blueprint)
 
 ```bash
-# 1. Cài Railway CLI
-npm i -g @railway/cli
-
-# 2. Đăng nhập
-railway login
-
-# 3. Khởi tạo project (chạy từ thư mục 06-lab-complete)
-cd 06-lab-complete
-railway init
-
-# 4. Set environment variables
-railway variables set AGENT_API_KEY=<strong-random-key-here>
-railway variables set ENVIRONMENT=production
-railway variables set LOG_LEVEL=INFO
-railway variables set RATE_LIMIT_PER_MINUTE=10
-
-# 5. Deploy
-railway up
-
-# 6. Lấy domain
-railway domain
+# 1. Push repository lên GitHub
+# 2. Render Dashboard -> New -> Blueprint
+# 3. Chọn branch: main
+# 4. Blueprint Path: 06-lab-complete/render.yaml
+# 5. Set secrets: OPENAI_API_KEY, AGENT_API_KEY
+# 6. Deploy và nhận URL *.onrender.com
 ```
 
 ---
@@ -50,12 +35,14 @@ railway domain
 
 | Variable | Value |
 |----------|-------|
-| `PORT` | Tự inject bởi Railway |
+| `PORT` | Tự inject bởi Render |
+| `OPENAI_API_KEY` | *(secret — không hiển thị)* |
 | `AGENT_API_KEY` | *(secret — không hiển thị)* |
 | `ENVIRONMENT` | `production` |
-| `LOG_LEVEL` | `INFO` |
-| `RATE_LIMIT_PER_MINUTE` | `10` |
+| `APP_VERSION` | `1.0.0` |
+| `RATE_LIMIT_PER_MINUTE` | `20` |
 | `DAILY_BUDGET_USD` | `5.0` |
+| `JWT_SECRET` | `generateValue: true` |
 
 ---
 
@@ -63,7 +50,7 @@ railway domain
 
 ### 1. Health Check
 ```bash
-curl https://<your-app>.railway.app/health
+curl https://ai-agent-production-5g0u.onrender.com/health
 ```
 **Expected response:**
 ```json
@@ -72,7 +59,7 @@ curl https://<your-app>.railway.app/health
 
 ### 2. Authentication required (no key → 401)
 ```bash
-curl -X POST https://<your-app>.railway.app/ask \
+curl -X POST https://ai-agent-production-5g0u.onrender.com/ask \
   -H "Content-Type: application/json" \
   -d '{"question": "Hello"}'
 ```
@@ -84,7 +71,7 @@ HTTP Status: `401 Unauthorized`
 
 ### 3. With API key → 200
 ```bash
-curl -X POST https://<your-app>.railway.app/ask \
+curl -X POST https://ai-agent-production-5g0u.onrender.com/ask \
   -H "X-API-Key: YOUR_AGENT_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{"question": "Hello, what is Docker?"}'
@@ -103,19 +90,19 @@ curl -X POST https://<your-app>.railway.app/ask \
 ```bash
 for i in $(seq 1 15); do
   curl -s -o /dev/null -w "Request $i: %{http_code}\n" \
-    -X POST https://<your-app>.railway.app/ask \
+    -X POST https://ai-agent-production-5g0u.onrender.com/ask \
     -H "X-API-Key: YOUR_AGENT_API_KEY" \
     -H "Content-Type: application/json" \
     -d '{"question": "test"}'
 done
 ```
-**Expected:** Requests 1–10 trả `200`, từ request 11 trở đi trả `429 Too Many Requests`
+**Expected:** Request trong hạn mức trả `200`, vượt hạn mức trả `429 Too Many Requests`.
 
 ---
 
 ## Screenshots
 
-- `screenshots/railway-dashboard.png` — Railway project dashboard
+- `screenshots/render-dashboard.png` — Render project dashboard
 - `screenshots/service-running.png` — Service đang chạy (healthy)
 - `screenshots/test-health.png` — Kết quả curl /health
 - `screenshots/test-auth.png` — Test 401 và 200

@@ -45,6 +45,13 @@ day12_ha-tang-cloud_va_deployment/
 
 **Muốn học kỹ?** → [CODE_LAB.md](CODE_LAB.md) (3-4 giờ)
 
+## Documentation (Bonus Points)
+
+- README with setup instructions: [06-lab-complete/README.md](06-lab-complete/README.md#1-setup-instructions)
+- API documentation: [06-lab-complete/README.md](06-lab-complete/README.md#2-api-documentation)
+- Architecture diagram: [06-lab-complete/README.md](06-lab-complete/README.md#3-architecture-diagram)
+- Deployment guide: [06-lab-complete/README.md](06-lab-complete/README.md#4-deployment-guide-render)
+
 ## Cách Học
 
 | Bước | Làm gì |
