@@ -2,7 +2,7 @@
 # Production Dockerfile — Multi-stage, < 500 MB, non-root
 # ============================================================
 
-# Stage 1: Builder
+# Stage 1: Builder — cài dependencies vào virtualenv
 FROM python:3.11-slim AS builder
 
 WORKDIR /build
@@ -10,8 +10,12 @@ WORKDIR /build
 RUN apt-get update && apt-get install -y gcc libpq-dev \
     && rm -rf /var/lib/apt/lists/*
 
+# Tạo virtualenv để tránh lỗi --user path khi chạy với non-root user
+RUN python -m venv /venv
+ENV PATH="/venv/bin:$PATH"
+
 COPY requirements.txt .
-RUN pip install --no-cache-dir --user -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
 
 # Stage 2: Runtime
@@ -22,8 +26,8 @@ RUN groupadd -r agent && useradd -r -g agent -d /app agent
 
 WORKDIR /app
 
-# Copy packages từ builder
-COPY --from=builder /root/.local /home/agent/.local
+# Copy toàn bộ virtualenv từ builder — không phụ thuộc user path
+COPY --from=builder /venv /venv
 
 # Copy application
 COPY app/ ./app/
@@ -33,7 +37,8 @@ RUN chown -R agent:agent /app
 
 USER agent
 
-ENV PATH=/home/agent/.local/bin:$PATH
+# Dùng virtualenv — uvicorn và tất cả packages đều tìm thấy
+ENV PATH="/venv/bin:$PATH"
 ENV PYTHONPATH=/app
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
